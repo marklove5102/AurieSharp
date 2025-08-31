@@ -61,11 +61,5 @@ namespace YYTKInterop
 			GameVariable^ get(System::String ^ name);
 			void set(System::String ^ name, GameVariable ^ value);
 		}
-
-		property GameVariable^ Builtins[System::String^]
-		{
-			GameVariable ^ get(System::String ^ name);
-			void set(System::String^ name, GameVariable^ value);
-		}
 	};
 }

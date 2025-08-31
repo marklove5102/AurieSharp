@@ -145,34 +145,4 @@ namespace YYTKInterop
 
 		self[marshal_as<std::string>(Name)] = Value->ToRValue();
 	}
-
-	GameVariable^ GameInstance::Builtins::get(System::String^ Name)
-	{
-		YYTK::RValue result;
-
-		auto last_status = YYTK::GetInterface()->GetBuiltin(
-			marshal_as<std::string>(Name),
-			GetNativeInstance(),
-			NULL_INDEX,
-			result
-		);
-
-		if (!Aurie::AurieSuccess(last_status))
-			throw gcnew System::InvalidCastException("Cannot access invalid built-in of a struct variable!");
-
-		return GameVariable::CreateFromRValue(result);
-	}
-
-	void GameInstance::Builtins::set(System::String^ Name, GameVariable^ Value)
-	{
-		auto last_status = YYTK::GetInterface()->SetBuiltin(
-			marshal_as<std::string>(Name),
-			GetNativeInstance(),
-			NULL_INDEX,
-			*Value->m_Value
-		);
-
-		if (!Aurie::AurieSuccess(last_status))
-			throw gcnew System::InvalidCastException("Cannot access invalid built-in of a struct variable!");
-	}
 }
