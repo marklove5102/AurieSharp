@@ -200,6 +200,36 @@ namespace YYTKInterop
 		return gcnew GameRoom(room);
 	}
 
+	GameVariable^ Game::EngineController::GetBuiltinVariable(System::String^ Name, GameObject^ Object, int ArrayIndex)
+	{
+		YYTK::RValue value;
+
+		auto last_status = YYTK::GetInterface()->GetBuiltin(
+			marshal_as<std::string>(Name),
+			reinterpret_cast<YYTK::CInstance*>(Object->m_Object),
+			(ArrayIndex == -1) ? NULL_INDEX : ArrayIndex,
+			value
+		);
+
+		if (!Aurie::AurieSuccess(last_status))
+			throw gcnew InvalidOperationException("Failed to get builtin variable!");
+
+		return GameVariable::CreateFromRValue(value);
+	}
+
+	void Game::EngineController::SetBuiltinVariable(System::String^ Name, GameObject^ Object, int ArrayIndex, GameVariable^ NewValue)
+	{
+		auto last_status = YYTK::GetInterface()->SetBuiltin(
+			marshal_as<std::string>(Name),
+			reinterpret_cast<YYTK::CInstance*>(Object->m_Object),
+			(ArrayIndex == -1) ? NULL_INDEX : ArrayIndex,
+			NewValue->ToRValue()
+		);
+
+		if (!Aurie::AurieSuccess(last_status))
+			throw gcnew InvalidOperationException("Failed to set builtin variable!");
+	}
+
 	void Game::EventController::RaiseObjectEvent(
 		std::string Name, 
 		YYTK::CInstance* Self,
@@ -249,7 +279,8 @@ namespace YYTKInterop
 			Self,
 			Other,
 			ArgumentCount,
-			Arguments
+			Arguments,
+			false
 		);
 
 		for each (auto kv_pair in m_BeforeScriptHandlers)
@@ -277,7 +308,8 @@ namespace YYTKInterop
 			Self,
 			Other,
 			ArgumentCount,
-			Arguments
+			Arguments,
+			true
 		);
 
 		for each(auto kv_pair in m_AfterScriptHandlers)
@@ -304,7 +336,8 @@ namespace YYTKInterop
 			Self,
 			Other,
 			ArgumentCount,
-			Arguments
+			Arguments,
+			false
 		);
 
 		for each (auto kv_pair in m_BeforeBuiltinHandlers)
@@ -332,7 +365,8 @@ namespace YYTKInterop
 			Self,
 			Other,
 			ArgumentCount,
-			Arguments
+			Arguments,
+			true
 		);
 
 		for each (auto kv_pair in m_AfterBuiltinHandlers)
@@ -1015,6 +1049,11 @@ namespace YYTKInterop
 		return m_Name;
 	}
 
+	bool ScriptExecutionContext::Executed::get()
+	{
+		return m_PostOriginalCall;
+	}
+
 	GameObject^ CodeExecutionContext::Self::get()
 	{
 		return gcnew GameObject(m_SelfObject);
@@ -1054,6 +1093,11 @@ namespace YYTKInterop
 	String^ BuiltinExecutionContext::Name::get()
 	{
 		return m_Name;
+	}
+
+	bool BuiltinExecutionContext::Executed::get()
+	{
+		return m_PostOriginalCall;
 	}
 
 	GameObject^ BuiltinExecutionContext::Self::get()

@@ -57,9 +57,9 @@ namespace YYTKInterop
 		return x.ToDouble();
 	}
 
-	void GameInstance::X::set(double NewX)
+	void GameInstance::X::set(double NewValue)
 	{
-		YYTK::RValue new_x = NewX;
+		YYTK::RValue new_x = NewValue;
 
 		if (!Aurie::AurieSuccess(YYTK::GetInterface()->SetBuiltin("x", GetNativeInstance(), NULL_INDEX, new_x)))
 			throw gcnew InvalidOperationException("Failed to set X coordinate!");
@@ -75,12 +75,30 @@ namespace YYTKInterop
 		return y.ToDouble();
 	}
 
-	void GameInstance::Y::set(double NewY)
+	void GameInstance::Y::set(double NewValue)
 	{
-		YYTK::RValue new_y = NewY;
+		YYTK::RValue new_y = NewValue;
 
 		if (!Aurie::AurieSuccess(YYTK::GetInterface()->SetBuiltin("y", GetNativeInstance(), NULL_INDEX, new_y)))
 			throw gcnew InvalidOperationException("Failed to set Y coordinate!");
+	}
+
+	bool GameInstance::Visible::get()
+	{
+		YYTK::RValue y;
+
+		if (!Aurie::AurieSuccess(YYTK::GetInterface()->GetBuiltin("visible", GetNativeInstance(), NULL_INDEX, y)))
+			throw gcnew InvalidOperationException("Failed to get visible property of instance!");
+
+		return y.ToBoolean();
+	}
+
+	void GameInstance::Visible::set(bool NewValue)
+	{
+		YYTK::RValue new_value = NewValue;
+
+		if (!Aurie::AurieSuccess(YYTK::GetInterface()->SetBuiltin("visible", GetNativeInstance(), NULL_INDEX, new_value)))
+			throw gcnew InvalidOperationException("Failed to set visibility!");
 	}
 
 	int GameInstance::ID::get()
@@ -126,5 +144,35 @@ namespace YYTKInterop
 		YYTK::RValue self = YYTK::RValue(this->m_Object);
 
 		self[marshal_as<std::string>(Name)] = Value->ToRValue();
+	}
+
+	GameVariable^ GameInstance::Builtins::get(System::String^ Name)
+	{
+		YYTK::RValue result;
+
+		auto last_status = YYTK::GetInterface()->GetBuiltin(
+			marshal_as<std::string>(Name),
+			GetNativeInstance(),
+			NULL_INDEX,
+			result
+		);
+
+		if (!Aurie::AurieSuccess(last_status))
+			throw gcnew System::InvalidCastException("Cannot access invalid built-in of a struct variable!");
+
+		return GameVariable::CreateFromRValue(result);
+	}
+
+	void GameInstance::Builtins::set(System::String^ Name, GameVariable^ Value)
+	{
+		auto last_status = YYTK::GetInterface()->SetBuiltin(
+			marshal_as<std::string>(Name),
+			GetNativeInstance(),
+			NULL_INDEX,
+			*Value->m_Value
+		);
+
+		if (!Aurie::AurieSuccess(last_status))
+			throw gcnew System::InvalidCastException("Cannot access invalid built-in of a struct variable!");
 	}
 }

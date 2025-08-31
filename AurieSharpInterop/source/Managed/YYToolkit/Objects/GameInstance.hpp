@@ -31,18 +31,24 @@ namespace YYTKInterop
 		property double X
 		{
 			double get();
-			void set(double NewX);
+			void set(double NewValue);
 		}
 
 		property double Y
 		{
 			double get();
-			void set(double NewX);
+			void set(double NewValue);
 		}
 
 		property int ID
 		{
 			int get();
+		}
+
+		property bool Visible
+		{
+			bool get();
+			void set(bool NewValue);
 		}
 
 		property Gen::IReadOnlyDictionary<System::String^, GameVariable^>^ Members
@@ -51,9 +57,15 @@ namespace YYTKInterop
 		}
 
 		property GameVariable^ default[System::String^]
-			{
-				GameVariable^ get(System::String ^ name);
-				void set(System::String ^ name, GameVariable ^ value);
-			}
+		{
+			GameVariable^ get(System::String ^ name);
+			void set(System::String ^ name, GameVariable ^ value);
+		}
+
+		property GameVariable^ Builtins[System::String^]
+		{
+			GameVariable ^ get(System::String ^ name);
+			void set(System::String^ name, GameVariable^ value);
+		}
 	};
 }

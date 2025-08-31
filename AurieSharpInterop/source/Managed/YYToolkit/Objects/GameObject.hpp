@@ -19,6 +19,12 @@ namespace YYTKInterop
 	public:
 		bool IsInstance();
 
+		property GameVariable^ Builtins[System::String^]
+		{
+			GameVariable^ get(System::String ^ name);
+			void set(System::String ^ name, GameVariable ^ value);
+		}
+
 		property System::String^ Name
 		{
 			System::String ^ get();

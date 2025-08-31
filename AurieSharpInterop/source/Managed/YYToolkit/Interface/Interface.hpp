@@ -45,10 +45,11 @@ namespace YYTKInterop
 		YYTK::RValue** m_Arguments;
 		bool m_ResultOverridden;
 		System::String^ m_Name;
+		bool m_PostOriginalCall;
 
-		ScriptExecutionContext(std::string Name, YYTK::RValue& Result, YYTK::YYObjectBase* Self, YYTK::YYObjectBase* Other, int ArgumentCount, YYTK::RValue** Arguments) :
+		ScriptExecutionContext(std::string Name, YYTK::RValue& Result, YYTK::YYObjectBase* Self, YYTK::YYObjectBase* Other, int ArgumentCount, YYTK::RValue** Arguments, bool OriginalCalled) :
 			m_Name(gcnew System::String(Name.c_str())), m_Result(Result), m_SelfObject(Self), 
-			m_OtherObject(Other), m_ArgumentCount(ArgumentCount), m_Arguments(Arguments), m_ResultOverridden(false)
+			m_OtherObject(Other), m_ArgumentCount(ArgumentCount), m_Arguments(Arguments), m_ResultOverridden(false), m_PostOriginalCall(OriginalCalled)
 		{
 
 		}
@@ -74,12 +75,18 @@ namespace YYTKInterop
 			System::String^ get();
 		}
 
+		property bool Executed
+		{
+			bool get();
+		}
+
 		void OverrideArgument(int Index, GameVariable^ NewValue);
 
 		void OverrideResult(GameVariable^ NewValue);
 
 		GameVariable^ GetResult();
 	};
+
 	public ref class CodeExecutionContext sealed
 	{
 	internal:
@@ -131,10 +138,11 @@ namespace YYTKInterop
 		YYTK::RValue* m_Arguments;
 		bool m_ResultOverridden;
 		System::String^ m_Name;
+		bool m_PostOriginalCall;
 
-		BuiltinExecutionContext(std::string Name, YYTK::RValue& Result, YYTK::YYObjectBase* Self, YYTK::YYObjectBase* Other, int ArgumentCount, YYTK::RValue* Arguments) :
+		BuiltinExecutionContext(std::string Name, YYTK::RValue& Result, YYTK::YYObjectBase* Self, YYTK::YYObjectBase* Other, int ArgumentCount, YYTK::RValue* Arguments, bool OriginalCalled) :
 			m_Name(gcnew System::String(Name.c_str())), m_SelfObject(Self), m_OtherObject(Other),
-			m_ArgumentCount(ArgumentCount), m_Arguments(Arguments), m_Result(Result)
+			m_ArgumentCount(ArgumentCount), m_Arguments(Arguments), m_Result(Result), m_PostOriginalCall(OriginalCalled)
 		{
 
 		}
@@ -158,6 +166,11 @@ namespace YYTKInterop
 		property System::String^ Name
 		{
 			System::String^ get();
+		}
+
+		property bool Executed
+		{
+			bool get();
 		}
 
 		void OverrideArgument(int Index, GameVariable^ NewValue);
@@ -226,6 +239,21 @@ namespace YYTKInterop
 
 			// GetCurrentRoomData
 			GameRoom^ GetRunningRoom();
+
+			// GetBuiltin
+			GameVariable^ GetBuiltinVariable(
+				System::String^ Name,
+				GameObject^ Object,
+				int ArrayIndex
+			);
+
+			// SetBuiltin
+			void SetBuiltinVariable(
+				System::String^ Name,
+				GameObject^ Object,
+				int ArrayIndex,
+				GameVariable^ NewValue
+			);
 		};
 
 		ref class EventController sealed
@@ -361,7 +389,6 @@ namespace YYTKInterop
 				System::String^ BuiltinName
 			);
 
-		public:
 			// Lock without the need for exclusive access
 			void Lock();
 			// Unlock what you locked.
@@ -373,6 +400,7 @@ namespace YYTKInterop
 			// Unlock exclusive access.
 			void LeaveLockdown();
 
+		public:
 			void RemoveAllBuiltinHooksForMod(
 				AurieSharpInterop::AurieManagedModule^ Module
 			);
