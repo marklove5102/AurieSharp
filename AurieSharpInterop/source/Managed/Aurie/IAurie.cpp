@@ -67,7 +67,7 @@ namespace AurieSharpInterop
 	)
 	{
 		std::string native_string = marshal_as<std::string>(Text);
-		return Aurie::DbgPrint(native_string.c_str());
+		return Aurie::DbgPrint("%s", native_string.c_str());
 	}
 	
 	void Framework::PrintEx(
@@ -76,7 +76,7 @@ namespace AurieSharpInterop
 	)
 	{
 		std::string native_string = marshal_as<std::string>(Text);
-		return Aurie::DbgPrintEx(static_cast<Aurie::AurieLogSeverity>(Severity), native_string.c_str());
+		return Aurie::DbgPrintEx(static_cast<Aurie::AurieLogSeverity>(Severity), "%s", native_string.c_str());
 	}
 
 	AurieStatus Framework::LoadNativeModule(System::String^ ModulePath)
