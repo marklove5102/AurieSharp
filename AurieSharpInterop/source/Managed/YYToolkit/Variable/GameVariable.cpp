@@ -311,12 +311,17 @@ namespace YYTKInterop
 
 	bool GameVariable::TryGetString(System::String^% Value)
 	{
+		if (m_Value->IsUndefined())
+		{
+			Value = gcnew System::String("undefined");
+			return true;
+		}
+
 		// YYTK can safely convert all these types to strings!
 		if (!m_Value->IsString() &&
 			!m_Value->IsNumberConvertible() &&
 			!m_Value->IsStruct() &&
 			!m_Value->IsArray() &&
-			!m_Value->IsUndefined() &&
 			m_Value->m_Kind != YYTK::VALUE_REF
 		)
 		{
@@ -342,6 +347,11 @@ namespace YYTKInterop
 		return true;
 	}
 
+	bool GameVariable::IsAccessible()
+	{
+		return !m_Value->IsUndefined();
+	}
+
 	GameVariable::~GameVariable()
 	{
 		this->!GameVariable();
@@ -363,6 +373,11 @@ namespace YYTKInterop
 
 	System::String^ GameVariable::Type::get()
 	{
+		if (m_Value->IsUndefined())
+		{
+			return gcnew System::String("undefined");
+		}
+
 		if (m_Value->m_Kind == YYTK::VALUE_OBJECT)
 		{
 			std::string rvalue_kind_name = YYTK::GetPrivateInterface()->RV_GetKindName(m_Value);

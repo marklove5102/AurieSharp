@@ -23,7 +23,7 @@ namespace YYTKInterop
 	)
 	{
 		static long frame_count = 0;
-		YYTK::RValue delta_time;
+		YYTK::RValue delta_time = {};
 		YYTK::GetInterface()->GetBuiltin("delta_time", nullptr, NULL_INDEX, delta_time);
 
 		Game::Events->RaiseFrameEvent(frame_count, delta_time.ToDouble() / 1000.0);
@@ -71,7 +71,7 @@ namespace YYTKInterop
 		// GameInstance object from it will cause a crash with InvalidCastException.
 		//
 		// This is a fault of C++ YYTK accepting a type it shouldn't.
-		YYTK::RValue result;
+		YYTK::RValue result = {};
 		last_status = YYTK::GetInterface()->CallBuiltinEx(
 			result,
 			function_name.c_str(),
@@ -136,7 +136,7 @@ namespace YYTKInterop
 		// GameInstance object from it will cause a crash with InvalidCastException.
 		//
 		// This is a fault of C++ YYTK accepting a type it shouldn't.
-		YYTK::RValue result;
+		YYTK::RValue result = {};
 		last_status = YYTK::GetInterface()->CallGameScriptEx(
 			result,
 			function_name.c_str(),
@@ -202,7 +202,7 @@ namespace YYTKInterop
 
 	GameVariable^ Game::EngineController::GetBuiltinVariable(System::String^ Name, GameObject^ Object, int ArrayIndex)
 	{
-		YYTK::RValue value;
+		YYTK::RValue value = {};
 
 		auto last_status = YYTK::GetInterface()->GetBuiltin(
 			marshal_as<std::string>(Name),

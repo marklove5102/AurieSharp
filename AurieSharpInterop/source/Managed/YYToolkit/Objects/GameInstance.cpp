@@ -49,7 +49,7 @@ namespace YYTKInterop
 
 	double GameInstance::X::get()
 	{
-		YYTK::RValue x;
+		YYTK::RValue x = {};
 
 		if (!Aurie::AurieSuccess(YYTK::GetInterface()->GetBuiltin("x", GetNativeInstance(), NULL_INDEX, x)))
 			throw gcnew InvalidOperationException("Failed to get X coordinate!");
@@ -67,7 +67,7 @@ namespace YYTKInterop
 
 	double GameInstance::Y::get()
 	{
-		YYTK::RValue y;
+		YYTK::RValue y = {};
 
 		if (!Aurie::AurieSuccess(YYTK::GetInterface()->GetBuiltin("y", GetNativeInstance(), NULL_INDEX, y)))
 			throw gcnew InvalidOperationException("Failed to get Y coordinate!");
@@ -85,7 +85,7 @@ namespace YYTKInterop
 
 	bool GameInstance::Visible::get()
 	{
-		YYTK::RValue y;
+		YYTK::RValue y = {};
 
 		if (!Aurie::AurieSuccess(YYTK::GetInterface()->GetBuiltin("visible", GetNativeInstance(), NULL_INDEX, y)))
 			throw gcnew InvalidOperationException("Failed to get visible property of instance!");
@@ -103,7 +103,7 @@ namespace YYTKInterop
 
 	int GameInstance::ID::get()
 	{
-		YYTK::RValue id;
+		YYTK::RValue id = {};
 
 		if (!Aurie::AurieSuccess(YYTK::GetInterface()->GetBuiltin("id", GetNativeInstance(), NULL_INDEX, id)))
 			throw gcnew InvalidOperationException("Failed to get ID!");

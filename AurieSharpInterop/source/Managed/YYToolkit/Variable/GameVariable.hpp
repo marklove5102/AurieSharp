@@ -85,6 +85,8 @@ namespace YYTKInterop
 		bool TryGetString([Out] System::String^% Value);
 		bool TryGetArrayView([Out] Gen::IReadOnlyList<GameVariable^>^% Value);
 
+		bool IsAccessible();
+
 		// Destructor - called only when modders use Dispose() or instance goes out of scope of a "using" block
 		~GameVariable();
 		// Finalizer - called by GC
