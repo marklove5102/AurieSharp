@@ -51,7 +51,9 @@ namespace YYTKInterop
 			m_Name(gcnew System::String(Name.c_str())), m_Result(Result), m_SelfObject(Self), 
 			m_OtherObject(Other), m_ArgumentCount(ArgumentCount), m_Arguments(Arguments), m_ResultOverridden(false), m_PostOriginalCall(OriginalCalled)
 		{
-
+			// Fix for varargs script functions
+			if (m_ArgumentCount < 0)
+				m_ArgumentCount = 0;
 		}
 
 	public:
@@ -101,7 +103,9 @@ namespace YYTKInterop
 			m_Name(gcnew System::String(Name.c_str())), m_SelfObject(Self), m_OtherObject(Other),
 			m_ArgumentCount(ArgumentCount), m_Arguments(Arguments)
 		{
-
+			// Fix for varargs code functions
+			if (m_ArgumentCount < 0)
+				m_ArgumentCount = 0;
 		}
 
 	public:
@@ -144,7 +148,9 @@ namespace YYTKInterop
 			m_Name(gcnew System::String(Name.c_str())), m_SelfObject(Self), m_OtherObject(Other),
 			m_ArgumentCount(ArgumentCount), m_Arguments(Arguments), m_Result(Result), m_PostOriginalCall(OriginalCalled)
 		{
-
+			// Fix for varargs builtin functions
+			if (m_ArgumentCount < 0)
+				m_ArgumentCount = 0;
 		}
 
 	public:
