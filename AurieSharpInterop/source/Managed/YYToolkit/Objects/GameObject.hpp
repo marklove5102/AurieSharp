@@ -19,6 +19,15 @@ namespace YYTKInterop
 	public:
 		bool IsInstance();
 
+		void AddMember(
+			System::String^ Name,
+			GameVariable^ Value
+		);
+
+		bool RemoveMember(
+			System::String^ Name
+		);
+
 		property System::String^ Name
 		{
 			System::String ^ get();

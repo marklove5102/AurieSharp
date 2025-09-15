@@ -45,6 +45,9 @@ namespace YYTKInterop
 		// Creates a VALUE_STRING RValue
 		GameVariable(System::String^ Value);
 
+		// Creates a VALUE_OBJECT RValue
+		GameVariable(Gen::IReadOnlyDictionary<System::String^, GameVariable^>^ Value);
+
 		// Implicit conversions such that C# can do GameVariable var = "string" for example
 		static operator GameVariable ^ (double Value);
 		static operator GameVariable ^ (bool Value);
@@ -54,6 +57,7 @@ namespace YYTKInterop
 		static operator GameVariable ^ (GameObject^ Value);
 		static operator GameVariable ^ (GameInstance^ Value);
 		static operator GameVariable ^ (System::String^ Value);
+		static operator GameVariable ^ (Gen::IReadOnlyDictionary<System::String^, GameVariable^>^ Value);
 
 		System::Int32 ToInt32();
 		System::Int64 ToInt64();
@@ -64,6 +68,7 @@ namespace YYTKInterop
 		GameObject^ ToGameObject();
 		GameInstance^ ToGameInstance();
 		Gen::IReadOnlyList<GameVariable^>^ ToArrayView();
+		Gen::IReadOnlyDictionary<System::String^, GameVariable^>^ ToDictionary();
 
 		static operator bool(GameVariable^ Variable);
 		static operator float(GameVariable^ Variable);
@@ -74,6 +79,7 @@ namespace YYTKInterop
 		static operator GameObject^(GameVariable^ Variable);
 		static operator GameInstance^ (GameVariable^ Variable);
 		static operator Gen::IReadOnlyList<GameVariable^>^ (GameVariable^ Variable);
+		static operator Gen::IReadOnlyDictionary<System::String^, GameVariable^> ^ (GameVariable^ Variable);
 
 		bool TryGetInt32([Out] System::Int32% Value);
 		bool TryGetInt64([Out] System::Int64% Value);
@@ -84,6 +90,16 @@ namespace YYTKInterop
 		bool TryGetGameInstance([Out] GameInstance^% Value);
 		bool TryGetString([Out] System::String^% Value);
 		bool TryGetArrayView([Out] Gen::IReadOnlyList<GameVariable^>^% Value);
+		bool TryGetDictionary([Out] Gen::IReadOnlyDictionary<System::String^, GameVariable^>^% Value);
+
+		void AddMember(
+			System::String^ Name,
+			GameVariable^ Value
+		);
+
+		bool RemoveMember(
+			System::String^ Name
+		);
 
 		bool IsAccessible();
 

@@ -23,6 +23,15 @@ namespace YYTKInterop
 
 		static GameInstance^ FromObject(GameObject^ Object);
 
+		void AddMember(
+			System::String^ Name,
+			GameVariable^ Value
+		);
+
+		bool RemoveMember(
+			System::String^ Name
+		);
+
 		property System::String^ Name
 		{
 			System::String^ get();

@@ -76,6 +76,17 @@ namespace YYTKInterop
 		InitializeFromRValue(YYTK::RValue(marshal_as<std::string>(Value)));
 	}
 
+	GameVariable::GameVariable(Gen::IReadOnlyDictionary<System::String^, GameVariable^>^ Value)
+	{
+		std::map<std::string, YYTK::RValue> native_map;
+		for each(auto kv in Value)
+		{
+			native_map[marshal_as<std::string>(kv.Key)] = kv.Value->ToRValue();
+		}
+
+		InitializeFromRValue(YYTK::RValue(native_map));
+	}
+
 	GameVariable::operator GameVariable ^ (double Value)
 	{
 		return gcnew GameVariable(Value);
@@ -112,6 +123,11 @@ namespace YYTKInterop
 	}
 
 	GameVariable::operator GameVariable ^ (System::String^ Value)
+	{
+		return gcnew GameVariable(Value);
+	}
+
+	GameVariable::operator GameVariable ^ (Gen::IReadOnlyDictionary<System::String^, GameVariable^>^ Value)
 	{
 		return gcnew GameVariable(Value);
 	}
@@ -197,6 +213,15 @@ namespace YYTKInterop
 		throw gcnew System::InvalidCastException("RValue is not castable to Array!");
 	}
 
+	Gen::IReadOnlyDictionary<System::String^, GameVariable^>^ GameVariable::ToDictionary()
+	{
+		Gen::IReadOnlyDictionary<System::String^, GameVariable^>^ value = nullptr;
+		if (TryGetDictionary(value))
+			return value;
+
+		throw gcnew System::InvalidCastException("RValue is not castable to Dictionary!");
+	}
+
 	GameVariable::operator bool(GameVariable^ Variable)
 	{
 		return Variable->ToBoolean();
@@ -235,6 +260,11 @@ namespace YYTKInterop
 	GameVariable::operator GameInstance^(GameVariable^ Variable)
 	{
 		return Variable->ToGameInstance();
+	}
+
+	GameVariable::operator Gen::IReadOnlyDictionary<System::String^, GameVariable^> ^ (GameVariable^ Variable)
+	{
+		return Variable->ToDictionary();
 	}
 
 	GameVariable::operator Gen::IReadOnlyList<GameVariable^>^ (GameVariable^ Variable)
@@ -345,6 +375,51 @@ namespace YYTKInterop
 
 		Value = managed_list->AsReadOnly();
 		return true;
+	}
+
+	bool GameVariable::TryGetDictionary(
+		Gen::IReadOnlyDictionary<System::String^, GameVariable^>^% Value
+	)
+	{
+		if (!m_Value->IsStruct())
+			return false;
+
+		auto native_map = this->m_Value->ToMap();
+		auto managed_map = gcnew Gen::Dictionary<System::String^, GameVariable^>(static_cast<int>(native_map.size()));
+
+		for (const auto& [key, value] : native_map)
+			managed_map->Add(gcnew System::String(key.c_str()), CreateFromRValue(value));
+
+		Value = managed_map;
+		return true;
+	}
+
+	void GameVariable::AddMember(
+		System::String^ Name, 
+		GameVariable^ Value
+	)
+	{
+		if (!m_Value->IsStruct())
+			throw gcnew System::InvalidCastException("Attempted to add member to non-struct RValue!");
+
+		auto native_dict = this->m_Value->ToMap();
+		native_dict.insert({ marshal_as<std::string>(Name), Value->ToRValue() });
+		
+		*this->m_Value = native_dict;
+	}
+
+	bool GameVariable::RemoveMember(
+		System::String^ Name
+	)
+	{
+		if (!m_Value->IsStruct())
+			throw gcnew System::InvalidCastException("Attempted to add member to non-struct RValue!");
+
+		auto native_dict = this->m_Value->ToMap();
+		bool removed = native_dict.erase(marshal_as<std::string>(Name)) > 0;
+
+		*this->m_Value = native_dict;
+		return removed;
 	}
 
 	bool GameVariable::IsAccessible()

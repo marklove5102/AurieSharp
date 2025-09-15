@@ -41,6 +41,34 @@ namespace YYTKInterop
 		return managed_map;
 	}
 
+	void GameObject::AddMember(
+		System::String^ Name,
+		GameVariable^ Value
+	)
+	{
+		this->m_Object->Add(marshal_as<std::string>(Name).c_str(), Value->ToRValue(), 0);
+	}
+
+	bool GameObject::RemoveMember(
+		System::String^ Name
+	)
+	{
+		std::string name = marshal_as<std::string>(Name);
+		if (!YYTK::RValue(this->m_Object).ContainsValue(name))
+			return false;
+
+		YYTK::RValue result;
+		YYTK::GetInterface()->CallBuiltinEx(
+			result,
+			"variable_struct_remove",
+			reinterpret_cast<YYTK::CInstance*>(this->m_Object),
+			reinterpret_cast<YYTK::CInstance*>(this->m_Object),
+			{ this->m_Object, name.c_str() }
+		);
+		
+		return true;
+	}
+
 	GameVariable^ GameObject::default::get(System::String^ Name)
 	{
 		YYTK::RValue self = YYTK::RValue(this->m_Object);
