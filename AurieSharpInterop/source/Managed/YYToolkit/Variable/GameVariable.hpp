@@ -48,6 +48,9 @@ namespace YYTKInterop
 		// Creates a VALUE_OBJECT RValue
 		GameVariable(Gen::IReadOnlyDictionary<System::String^, GameVariable^>^ Value);
 
+		// Creates a VALUE_ARRAY RValue
+		GameVariable(Gen::IReadOnlyList<GameVariable^>^ Value);
+
 		// Implicit conversions such that C# can do GameVariable var = "string" for example
 		static operator GameVariable ^ (double Value);
 		static operator GameVariable ^ (bool Value);
@@ -57,6 +60,7 @@ namespace YYTKInterop
 		static operator GameVariable ^ (GameObject^ Value);
 		static operator GameVariable ^ (GameInstance^ Value);
 		static operator GameVariable ^ (System::String^ Value);
+		static operator GameVariable ^ (Gen::IReadOnlyList<GameVariable^> ^ Value);
 		static operator GameVariable ^ (Gen::IReadOnlyDictionary<System::String^, GameVariable^>^ Value);
 
 		System::Int32 ToInt32();

@@ -87,6 +87,17 @@ namespace YYTKInterop
 		InitializeFromRValue(YYTK::RValue(native_map));
 	}
 
+	GameVariable::GameVariable(Gen::IReadOnlyList<GameVariable^>^ Value)
+	{
+		std::vector<YYTK::RValue> native_list;
+		for each(auto v in Value)
+		{
+			native_list.push_back(v->ToRValue());
+		}
+
+		InitializeFromRValue(native_list);
+	}
+
 	GameVariable::operator GameVariable ^ (double Value)
 	{
 		return gcnew GameVariable(Value);
@@ -123,6 +134,11 @@ namespace YYTKInterop
 	}
 
 	GameVariable::operator GameVariable ^ (System::String^ Value)
+	{
+		return gcnew GameVariable(Value);
+	}
+
+	GameVariable::operator GameVariable ^ (Gen::IReadOnlyList<GameVariable^>^ Value)
 	{
 		return gcnew GameVariable(Value);
 	}

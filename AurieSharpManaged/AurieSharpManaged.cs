@@ -3,6 +3,7 @@ using System.Runtime.InteropServices;
 using System.Runtime.Loader;
 using System.Runtime.Versioning;
 using AurieSharpInterop;
+using YYTKInterop;
 
 namespace AurieSharpManaged
 {
@@ -22,7 +23,7 @@ namespace AurieSharpManaged
             catch (Exception ex)
             {
                 // Return true on exception to not load the mod.
-                Framework.PrintEx(AurieLogSeverity.Trace, $"[ASM] Failed to open assembly {AssemblyPath} - {ex.Message}");
+                Framework.PrintEx(AurieLogSeverity.Warning, $"[ASM] IsAssemblyASM fails to open assembly {AssemblyPath} - {ex.Message}");
                 return true;
             }
 
@@ -36,7 +37,7 @@ namespace AurieSharpManaged
             catch (Exception ex)
             {
                 // Return true on exception to not load the mod.
-                Framework.PrintEx(AurieLogSeverity.Error, $"[ASM] Failed to load managed assembly {AssemblyPath} - {ex.Message}");
+                Framework.PrintEx(AurieLogSeverity.Warning, $"[ASM] IsAssemblyASM fails to load managed assembly {AssemblyPath} - {ex.Message}");
                 return true;
             }
 
@@ -96,12 +97,10 @@ namespace AurieSharpManaged
             ManagedMod hotreloaded_mod = new(e.FullPath);
             last_status = hotreloaded_mod.Load();
 
+            // .Load() automatically cleans up if it fails loading
             if (last_status != AurieStatus.Success)
             {
                 Framework.PrintEx(AurieLogSeverity.Error, $"[ASM] Failed to load {e.Name} with status {last_status.ToString()}");
-                hotreloaded_mod.Unload(false);
-
-                GC.Collect();
                 return;
             }
 
@@ -154,6 +153,8 @@ namespace AurieSharpManaged
 
                 // Try to actually load the mod
                 AurieStatus load_status = new_mod.Load();
+
+                // .Load() automatically cleans up if it fails loading
                 if (load_status != AurieStatus.Success)
                 {
                     Framework.PrintEx(
@@ -189,6 +190,8 @@ namespace AurieSharpManaged
 
             m_LoadedMods.ForEach((mod) => { mod.Unload(true); });
             GC.Collect();
+
+            GameVariable my_gamemaker_array = new List<GameVariable> { 5, "string", "hi" };
 
             return AurieStatus.Success;
         }

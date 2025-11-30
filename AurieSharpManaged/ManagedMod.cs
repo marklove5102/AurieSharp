@@ -137,15 +137,29 @@ namespace AurieSharpManaged
                 return true;
             });
 
+            // If the mod doesn't have a initialize method
             if (initialize_method is null)
             {
-                Framework.PrintEx(AurieLogSeverity.Trace, "[ASM] initialize_method is null!");
+                // Remove the mod
+                m_LoadContext.Unload();
+                m_LoadAssembly = null;
+
+                Framework.PrintEx(AurieLogSeverity.Trace, $"[ASM] The mod {m_Path} does not contain an InitializeMod method!");
+
+                GC.Collect();
                 return AurieStatus.VerificationFailure;
             }
 
+            // If the mod doesn't have an unload method
             if (unload_method is null)
             {
-                Framework.PrintEx(AurieLogSeverity.Trace, "[ASM] unload_method is null!");
+                // Remove the mod
+                m_LoadContext.Unload();
+                m_LoadAssembly = null;
+
+                Framework.PrintEx(AurieLogSeverity.Trace, $"[ASM] The mod {m_Path} does not contain an UnloadMod method!");
+
+                GC.Collect();
                 return AurieStatus.VerificationFailure;
             }
 
