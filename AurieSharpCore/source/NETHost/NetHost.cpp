@@ -94,9 +94,9 @@ AurieStatus RuntimeManager::Initialize(
 		return last_status;
 
 	// Try to create the GAMEDIR/mods/Managed directory
-	m_NativeModDirectory = game_root_directory / "mods" / "Native";
-	m_AurieModDirectory = game_root_directory / "mods" / "Aurie";
-	m_ManagedModDirectory = game_root_directory / "mods" / "Managed";
+	m_NativeModDirectory = game_root_directory / "mods" / "native";
+	m_AurieModDirectory = game_root_directory / "mods" / "aurie";
+	m_ManagedModDirectory = game_root_directory / "mods" / "managed";
 	try
 	{
 		if (!fs::exists(m_ManagedModDirectory))
